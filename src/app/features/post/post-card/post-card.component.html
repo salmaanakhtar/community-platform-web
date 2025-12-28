@@ -1,0 +1,13 @@
+<div class="post-card" [class.deleted]="post.isDeleted">
+  <div class="post-header">
+    <span class="author">{{ post.author.username }}</span>
+    <span class="timestamp">{{ post.createdAt | date:'short' }}</span>
+  </div>
+  <div class="post-content">
+    {{ post.isDeleted ? 'Post deleted' : post.content }}
+  </div>
+  <div class="post-actions" *ngIf="!post.isDeleted">
+    <button (click)="likePost()">Like ({{ post.likesCount }})</button>
+    <button (click)="commentOnPost()">Comment ({{ post.commentsCount }})</button>
+  </div>
+</div>
