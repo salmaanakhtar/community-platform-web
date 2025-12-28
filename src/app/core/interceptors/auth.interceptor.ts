@@ -2,12 +2,14 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { ErrorHandlerService } from '../errors/error-handler.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const errorHandler = inject(ErrorHandlerService);
 
   const token = authService.getAccessToken();
   if (token) {
@@ -44,8 +46,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             return throwError(error);
           })
         );
+      } else {
+        // Handle other errors with error handler
+        errorHandler.handleError(error);
+        return throwError(error);
       }
-      return throwError(error);
     })
   );
 };

@@ -40,3 +40,8 @@ button:disabled {
   color: red;
   font-size: 14px;
 }
+
+.warning {
+  color: orange;
+  font-size: 14px;
+}

@@ -15,8 +15,9 @@
         Password is required.
       </div>
     </div>
-    <button type="submit" [disabled]="loginForm.invalid">Login</button>
+    <button type="submit" [disabled]="loginForm.invalid || isRateLimited">Login</button>
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="retryGuidance" class="warning">{{ retryGuidance }}</div>
   </form>
   <p>Don't have an account? <a routerLink="/auth/register">Register</a></p>
 </div>

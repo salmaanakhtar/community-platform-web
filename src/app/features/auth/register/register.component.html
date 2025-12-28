@@ -22,8 +22,9 @@
         Password must be at least 6 characters.
       </div>
     </div>
-    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+    <button type="submit" [disabled]="registerForm.invalid || isRateLimited">Register</button>
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="retryGuidance" class="warning">{{ retryGuidance }}</div>
   </form>
   <p>Already have an account? <a routerLink="/auth/login">Login</a></p>
 </div>

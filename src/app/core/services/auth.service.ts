@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -14,7 +14,7 @@ export class AuthService {
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
-      catchError(this.handleError),
+      catchError(error => throwError(error)),
       tap((response: any) => {
         this.accessToken = response.accessToken;
       })
@@ -23,7 +23,7 @@ export class AuthService {
 
   register(userData: { username: string; email: string; password: string }): Observable<any> {
     return this.http.post(`${environment.apiUrl}/auth/register`, userData).pipe(
-      catchError(this.handleError),
+      catchError(error => throwError(error)),
       tap((response: any) => {
         this.accessToken = response.accessToken;
       })
@@ -45,15 +45,9 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     return this.http.post(`${environment.apiUrl}/auth/refresh`, {}).pipe(
-      catchError(this.handleError),
       tap((response: any) => {
         this.accessToken = response.accessToken;
       })
     );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    // Handle error appropriately
-    return throwError(error);
   }
 }
