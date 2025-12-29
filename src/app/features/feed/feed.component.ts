@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FeedService, Post } from '../../core/services/feed.service';
 import { PostCardComponent } from '../post/post-card/post-card.component';
+import { CreatePostComponent } from '../post/create-post/create-post.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, PostCardComponent],
+  imports: [CommonModule, PostCardComponent, CreatePostComponent],
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.css'
 })

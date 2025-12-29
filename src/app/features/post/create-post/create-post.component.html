@@ -1,0 +1,44 @@
+<div class="create-post-container">
+  <h3>Create Post</h3>
+  <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <textarea
+        formControlName="content"
+        placeholder="What's on your mind?"
+        rows="3"
+        maxlength="500"
+      ></textarea>
+      <div class="char-count">{{ postForm.value.content?.length || 0 }}/500</div>
+    </div>
+
+    <div class="media-upload" *ngIf="previewUrl">
+      <div class="preview">
+        <img *ngIf="selectedFile && selectedFile.type.startsWith('image/')" [src]="previewUrl" alt="Preview">
+        <video *ngIf="selectedFile && selectedFile.type.startsWith('video/')" [src]="previewUrl" controls></video>
+        <button type="button" (click)="removeMedia()">Remove</button>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <input
+        type="file"
+        id="media"
+        accept="image/*,video/*"
+        (change)="onFileSelected($event)"
+        style="display: none;"
+      >
+      <label for="media" class="upload-btn">📎 Add Media</label>
+    </div>
+
+    <div *ngIf="!canPost" class="error">You are not allowed to post at this time.</div>
+    <div *ngIf="retryGuidance" class="warning">{{ retryGuidance }}</div>
+
+    <button
+      type="submit"
+      [disabled]="postForm.invalid || isRateLimited || !canPost || isPosting"
+      class="submit-btn"
+    >
+      {{ isPosting ? 'Posting...' : 'Post' }}
+    </button>
+  </form>
+</div>
