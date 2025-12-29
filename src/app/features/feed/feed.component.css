@@ -4,6 +4,22 @@
   padding: 20px;
 }
 
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.feed-header h2 {
+  margin: 0;
+}
+
+.feed-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .posts {
   margin-bottom: 20px;
 }
@@ -21,4 +37,12 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.search-btn {
+  background-color: #28a745;
+}
+
+.search-btn:hover {
+  background-color: #218838;
 }

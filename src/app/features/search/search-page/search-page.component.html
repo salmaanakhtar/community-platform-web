@@ -1,0 +1,90 @@
+<div class="search-page">
+  <div class="search-header">
+    <h1>Search</h1>
+    <div class="search-input-container">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Search for users and posts..."
+        class="search-input"
+        autocomplete="off"
+      >
+      <button
+        *ngIf="searchQuery"
+        (click)="clearSearch()"
+        class="clear-btn"
+        title="Clear search"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <div class="search-results" *ngIf="hasSearched">
+    <div *ngIf="isLoading" class="loading">
+      Searching...
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- Users Section -->
+      <div class="results-section" *ngIf="searchResults.users.length > 0">
+        <h2>Users</h2>
+        <div class="users-list">
+          <div
+            *ngFor="let user of searchResults.users"
+            class="user-result"
+            (click)="navigateToProfile(user._id)"
+          >
+            <div class="user-info">
+              <span class="username">{{ user.username }}</span>
+              <span class="email">{{ user.email }}</span>
+              <span class="bio" *ngIf="user.bio">{{ user.bio }}</span>
+            </div>
+            <div class="user-stats">
+              <span>{{ user.followersCount }} followers</span>
+              <span>{{ user.postsCount }} posts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Posts Section -->
+      <div class="results-section" *ngIf="searchResults.posts.length > 0">
+        <h2>Posts</h2>
+        <div class="posts-list">
+          <div
+            *ngFor="let post of searchResults.posts"
+            class="post-result"
+            (click)="navigateToPost(post._id)"
+          >
+            <div class="post-header">
+              <span class="author" (click)="navigateToProfile(post.author._id); $event.stopPropagation()">
+                {{ post.author.username }}
+              </span>
+              <span class="timestamp">{{ post.createdAt | date:'short' }}</span>
+            </div>
+            <div
+              class="post-content"
+              [innerHTML]="post.highlightedContent || post.content"
+            ></div>
+            <div class="post-stats">
+              <span>{{ post.likesCount }} likes</span>
+              <span>{{ post.commentsCount }} comments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="searchResults.users.length === 0 && searchResults.posts.length === 0" class="no-results">
+        No results found for "{{ searchQuery }}"
+      </div>
+    </div>
+  </div>
+
+  <!-- Initial State -->
+  <div *ngIf="!hasSearched" class="initial-state">
+    <p>Enter a search term to find users and posts</p>
+  </div>
+</div>

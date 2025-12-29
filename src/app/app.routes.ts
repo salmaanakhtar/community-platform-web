@@ -20,6 +20,11 @@ export const routes: Routes = [
     canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
   },
   {
+    path: 'search',
+    loadComponent: () => import('./features/search/search-page/search-page.component').then(m => m.SearchPageComponent),
+    canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+  },
+  {
     path: 'settings',
     children: [
       {

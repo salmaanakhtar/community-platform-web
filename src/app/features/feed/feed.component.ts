@@ -49,6 +49,10 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.router.navigate(['/auth/login']);
   }
 
+  navigateToSearch() {
+    this.router.navigate(['/search']);
+  }
+
   loadMore() {
     if (isPlatformBrowser(this.platformId)) {
       this.currentPage++;
