@@ -1,0 +1,57 @@
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.profile-info h2 {
+  margin: 0 0 10px 0;
+}
+
+.bio {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stats span {
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.follow-btn, .block-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.follow-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.follow-btn.unfollow {
+  background-color: #6c757d;
+}
+
+.block-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.block-btn.unblock {
+  background-color: #28a745;
+}

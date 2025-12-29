@@ -46,6 +46,14 @@ export class FeedService {
     return this.http.get<Post[]>(`${environment.apiUrl}/feed`, { params });
   }
 
+  getPostsByUser(userId: string, page: number = 1, limit: number = 10): Observable<Post[]> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<Post[]>(`${environment.apiUrl}/users/${userId}/posts`, { params });
+  }
+
   loadMorePosts(page: number, limit: number = 10): void {
     this.getFeed(page, limit).subscribe(newPosts => {
       const currentPosts = this.postsSubject.value;

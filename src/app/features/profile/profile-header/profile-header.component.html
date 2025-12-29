@@ -1,0 +1,28 @@
+<div class="profile-header" *ngIf="profile">
+  <div class="profile-info">
+    <h2>{{ profile.username }}</h2>
+    <p class="bio">{{ profile.bio || 'No bio yet.' }}</p>
+    <div class="stats">
+      <span>{{ profile.followersCount }} Followers</span>
+      <span>{{ profile.followingCount }} Following</span>
+      <span>{{ profile.postsCount }} Posts</span>
+    </div>
+  </div>
+  <div class="actions" *ngIf="!isCurrentUser">
+    <button
+      *ngIf="!isBlocked"
+      (click)="isFollowing ? unfollow() : follow()"
+      class="follow-btn"
+      [class.unfollow]="isFollowing"
+    >
+      {{ isFollowing ? 'Unfollow' : 'Follow' }}
+    </button>
+    <button
+      (click)="isBlocked ? unblock() : block()"
+      class="block-btn"
+      [class.unblock]="isBlocked"
+    >
+      {{ isBlocked ? 'Unblock' : 'Block' }}
+    </button>
+  </div>
+</div>

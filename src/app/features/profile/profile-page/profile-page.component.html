@@ -1,0 +1,20 @@
+<div class="profile-page">
+  <app-profile-header
+    [profile]="profile"
+    [userId]="userId"
+    (profileUpdated)="onProfileUpdated($event)">
+  </app-profile-header>
+
+  <div class="posts-section">
+    <h2>Posts</h2>
+    <div class="posts-list">
+      <app-post-card
+        *ngFor="let post of posts"
+        [post]="post">
+      </app-post-card>
+    </div>
+    <div *ngIf="posts.length === 0" class="no-posts">
+      No posts yet.
+    </div>
+  </div>
+</div>

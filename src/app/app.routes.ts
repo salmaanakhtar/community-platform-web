@@ -15,9 +15,19 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'feed',
-    loadComponent: () => import('./features/feed/feed.component').then(m => m.FeedComponent),
+    path: 'profile/:id',
+    loadComponent: () => import('./features/profile/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
     canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+  },
+  {
+    path: 'settings',
+    children: [
+      {
+        path: 'blocking',
+        loadComponent: () => import('./features/settings/blocking/blocking.component').then(m => m.BlockingComponent),
+        canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+      }
+    ]
   },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' }
 ];

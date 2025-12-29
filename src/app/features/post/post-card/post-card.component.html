@@ -1,6 +1,6 @@
 <div class="post-card" [class.deleted]="post.isDeleted">
   <div class="post-header">
-    <span class="author">{{ post.author.username }}</span>
+    <span class="author" (click)="navigateToProfile()" style="cursor: pointer; color: blue;">{{ post.author.username }}</span>
     <span class="timestamp">{{ post.createdAt | date:'short' }}</span>
   </div>
   <div class="post-content">

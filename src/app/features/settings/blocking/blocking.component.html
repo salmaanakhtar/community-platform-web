@@ -1,0 +1,26 @@
+<div class="blocking-settings">
+  <h2>Blocked Users</h2>
+
+  <div *ngIf="loading" class="loading">
+    Loading blocked users...
+  </div>
+
+  <div *ngIf="!loading && blockedUsers.length === 0" class="no-blocked">
+    You haven't blocked any users yet.
+  </div>
+
+  <div *ngIf="!loading && blockedUsers.length > 0" class="blocked-users-list">
+    <div *ngFor="let user of blockedUsers" class="blocked-user">
+      <div class="user-info">
+        <span class="username">{{ user.username }}</span>
+        <span class="email">{{ user.email }}</span>
+      </div>
+      <button
+        (click)="unblockUser(user._id)"
+        class="unblock-btn"
+      >
+        Unblock
+      </button>
+    </div>
+  </div>
+</div>

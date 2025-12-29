@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Post } from '../../../core/services/feed.service';
 import { EngagementService } from '../../../core/services/engagement.service';
 import { CommentListComponent } from '../comment-list/comment-list.component';
@@ -16,7 +17,10 @@ export class PostCardComponent implements OnInit {
   canEngage = true;
   showComments = false;
 
-  constructor(private engagementService: EngagementService) {}
+  constructor(
+    private engagementService: EngagementService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     // Check permissions
@@ -51,5 +55,9 @@ export class PostCardComponent implements OnInit {
 
   toggleComments(): void {
     this.showComments = !this.showComments;
+  }
+
+  navigateToProfile(): void {
+    this.router.navigate(['/profile', this.post.author._id]);
   }
 }
