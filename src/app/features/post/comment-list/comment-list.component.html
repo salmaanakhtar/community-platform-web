@@ -1,0 +1,24 @@
+<div class="comment-list">
+  <h4>Comments</h4>
+  <div class="comments">
+    <app-comment-item *ngFor="let comment of comments" [comment]="comment"></app-comment-item>
+  </div>
+
+  <div class="add-comment" *ngIf="canComment">
+    <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+      <textarea
+        formControlName="content"
+        placeholder="Add a comment..."
+        rows="2"
+        maxlength="200"
+      ></textarea>
+      <div class="char-count">{{ commentForm.value.content?.length || 0 }}/200</div>
+      <div *ngIf="retryGuidance" class="warning">{{ retryGuidance }}</div>
+      <button type="submit" [disabled]="commentForm.invalid || isRateLimited || isPosting">
+        {{ isPosting ? 'Posting...' : 'Comment' }}
+      </button>
+    </form>
+  </div>
+
+  <div *ngIf="!canComment" class="no-comment">You cannot comment on this post.</div>
+</div>

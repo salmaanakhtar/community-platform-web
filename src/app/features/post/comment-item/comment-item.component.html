@@ -1,0 +1,9 @@
+<div class="comment-item" [class.deleted]="comment.isDeleted">
+  <div class="comment-header">
+    <span class="author">{{ comment.author.username }}</span>
+    <span class="timestamp">{{ comment.createdAt | date:'short' }}</span>
+  </div>
+  <div class="comment-content">
+    {{ comment.isDeleted ? 'Comment removed' : comment.content }}
+  </div>
+</div>

@@ -1,28 +1,55 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../core/services/feed.service';
+import { EngagementService } from '../../../core/services/engagement.service';
+import { CommentListComponent } from '../comment-list/comment-list.component';
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CommentListComponent],
   templateUrl: './post-card.component.html',
   styleUrl: './post-card.component.css'
 })
-export class PostCardComponent {
+export class PostCardComponent implements OnInit {
   @Input() post!: Post;
+  canEngage = true;
+  showComments = false;
+
+  constructor(private engagementService: EngagementService) {}
+
+  ngOnInit() {
+    // Check permissions
+    this.engagementService.checkEngagementPermissions(this.post._id).subscribe({
+      next: (permissions) => {
+        this.canEngage = permissions.canEngage;
+      },
+      error: () => {
+        this.canEngage = false;
+      }
+    });
+  }
 
   likePost(): void {
-    if (!this.post.isDeleted) {
-      // Implement like logic
-      console.log('Like post', this.post._id);
+    if (!this.post.isDeleted && this.canEngage) {
+      // Optimistic update
+      const wasLiked = this.post.likesCount > 0; // Simplified, assume toggle
+      this.post.likesCount += wasLiked ? -1 : 1;
+
+      const action = wasLiked ? this.engagementService.unlikePost : this.engagementService.likePost;
+      action.call(this.engagementService, this.post._id).subscribe({
+        next: () => {
+          // Success, keep optimistic
+        },
+        error: () => {
+          // Rollback
+          this.post.likesCount += wasLiked ? 1 : -1;
+        }
+      });
     }
   }
 
-  commentOnPost(): void {
-    if (!this.post.isDeleted) {
-      // Implement comment logic
-      console.log('Comment on post', this.post._id);
-    }
+  toggleComments(): void {
+    this.showComments = !this.showComments;
   }
 }

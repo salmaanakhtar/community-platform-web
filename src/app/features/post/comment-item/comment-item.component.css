@@ -1,0 +1,32 @@
+.comment-item {
+  border-left: 2px solid #ddd;
+  padding-left: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.comment-item.deleted {
+  opacity: 0.6;
+  background-color: #f0f0f0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.author {
+  font-weight: bold;
+}
+
+.timestamp {
+  color: #666;
+}
+
+.comment-content {
+  line-height: 1.4;
+}
