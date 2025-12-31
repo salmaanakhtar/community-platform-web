@@ -50,4 +50,18 @@ export class AuthService {
       })
     );
   }
+
+  getCurrentUserId(): string | null {
+    if (!this.accessToken) return null;
+
+    try {
+      // Decode JWT token (simple decode, not verifying signature)
+      const payload = this.accessToken.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      return decodedPayload.userId || decodedPayload.id || null;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
+  }
 }

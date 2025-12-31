@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { UserProfile, ProfileService } from '../../../core/services/profile.service';
+import { MessageService } from '../../../core/services/message.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -24,6 +26,8 @@ export class ProfileHeaderComponent implements OnInit, OnChanges {
   constructor(
     private profileService: ProfileService,
     private authService: AuthService,
+    private messageService: MessageService,
+    private router: Router,
     private toastr: ToastrService
   ) {}
 
@@ -113,6 +117,25 @@ export class ProfileHeaderComponent implements OnInit, OnChanges {
       },
       error: (err) => {
         this.toastr.error('Failed to unblock user');
+      }
+    });
+  }
+
+  messageUser() {
+    // Check permissions first
+    this.messageService.checkMessagingPermissions(this.userId).subscribe({
+      next: (permissions) => {
+        if (permissions.canMessage) {
+          // Navigate to messages - the conversation will be created if it doesn't exist
+          this.router.navigate(['/messages'], {
+            queryParams: { user: this.userId }
+          });
+        } else {
+          this.toastr.error(permissions.reason || 'You cannot message this user');
+        }
+      },
+      error: () => {
+        this.toastr.error('Unable to check messaging permissions');
       }
     });
   }

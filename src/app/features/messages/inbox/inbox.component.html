@@ -1,0 +1,52 @@
+<div class="inbox">
+  <div class="inbox-header">
+    <h2>Messages</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading conversations...
+  </div>
+
+  <div *ngIf="!loading && conversations.length === 0" class="empty-inbox">
+    <p>No messages yet</p>
+    <p>Start a conversation by visiting a user's profile</p>
+  </div>
+
+  <div *ngIf="!loading && conversations.length > 0" class="conversations-list">
+    <div
+      *ngFor="let conversation of conversations"
+      class="conversation-item"
+      [class.unread]="conversation.unreadCount > 0"
+      (click)="openConversation(conversation)"
+    >
+      <div class="conversation-avatar">
+        <span class="avatar-placeholder">
+          {{ getOtherParticipant(conversation)?.username?.charAt(0)?.toUpperCase() || '?' }}
+        </span>
+      </div>
+
+      <div class="conversation-content">
+        <div class="conversation-header">
+          <span class="participant-name">
+            {{ getOtherParticipant(conversation)?.username || 'Unknown User' }}
+          </span>
+          <span class="timestamp">
+            {{ formatLastMessageTime(conversation.updatedAt) }}
+          </span>
+        </div>
+
+        <div class="last-message" *ngIf="conversation.lastMessage">
+          <span class="message-preview">
+            {{ conversation.lastMessage.content.length > 50
+               ? conversation.lastMessage.content.substring(0, 50) + '...'
+               : conversation.lastMessage.content }}
+          </span>
+        </div>
+
+        <div class="conversation-footer" *ngIf="conversation.unreadCount > 0">
+          <span class="unread-badge">{{ conversation.unreadCount }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

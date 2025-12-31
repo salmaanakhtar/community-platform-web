@@ -1,0 +1,39 @@
+<div class="conversation">
+  <div class="conversation-header">
+    <button (click)="goBack()" class="back-btn">← Back</button>
+    <h2>{{ otherParticipant?.username || 'Conversation' }}</h2>
+  </div>
+
+  <div *ngIf="!canMessage" class="block-notice">
+    <p>{{ blockReason || 'You cannot message this user' }}</p>
+  </div>
+
+  <div class="messages-container" #messagesContainer>
+    <div *ngIf="loading" class="loading">
+      Loading messages...
+    </div>
+
+    <div *ngIf="!loading && messages.length === 0" class="empty-conversation">
+      <p>No messages yet. Start the conversation!</p>
+    </div>
+
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      [class.own]="isOwnMessage(message)"
+      [class.other]="!isOwnMessage(message)"
+    >
+      <div class="message-content">
+        <p>{{ message.content }}</p>
+        <span class="message-time">{{ formatMessageTime(message.createdAt) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="canMessage" class="message-input-container">
+    <app-message-input
+      [conversationId]="conversationId"
+      (messageSent)="onMessageSent($event)">
+    </app-message-input>
+  </div>
+</div>

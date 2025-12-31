@@ -25,6 +25,21 @@ export const routes: Routes = [
     canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
   },
   {
+    path: 'messages',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/messages/inbox/inbox.component').then(m => m.InboxComponent),
+        canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./features/messages/conversation/conversation.component').then(m => m.ConversationComponent),
+        canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+      }
+    ]
+  },
+  {
     path: 'settings',
     children: [
       {

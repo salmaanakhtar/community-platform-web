@@ -46,3 +46,11 @@ button:hover {
 .search-btn:hover {
   background-color: #218838;
 }
+
+.messages-btn {
+  background-color: #17a2b8;
+}
+
+.messages-btn:hover {
+  background-color: #138496;
+}

@@ -1,0 +1,21 @@
+<div class="message-input">
+  <div class="input-container">
+    <textarea
+      #messageInput
+      [(ngModel)]="messageContent"
+      (input)="onInput()"
+      (keypress)="onKeyPress($event)"
+      placeholder="Type a message..."
+      class="message-textarea"
+      rows="1"
+      [disabled]="sending"
+    ></textarea>
+    <button
+      (click)="sendMessage()"
+      [disabled]="!messageContent.trim() || sending"
+      class="send-btn"
+    >
+      {{ sending ? 'Sending...' : 'Send' }}
+    </button>
+  </div>
+</div>

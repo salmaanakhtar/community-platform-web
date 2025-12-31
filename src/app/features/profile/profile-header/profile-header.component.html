@@ -18,6 +18,13 @@
       {{ isFollowing ? 'Unfollow' : 'Follow' }}
     </button>
     <button
+      *ngIf="!isBlocked"
+      (click)="messageUser()"
+      class="message-btn"
+    >
+      Message
+    </button>
+    <button
       (click)="isBlocked ? unblock() : block()"
       class="block-btn"
       [class.unblock]="isBlocked"

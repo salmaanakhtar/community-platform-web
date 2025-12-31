@@ -1,0 +1,112 @@
+.inbox {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.inbox-header {
+  margin-bottom: 20px;
+}
+
+.inbox-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.loading, .empty-inbox {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.conversations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.conversation-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-color: #007bff;
+}
+
+.conversation-item.unread {
+  border-left: 4px solid #007bff;
+  background: #f8f9ff;
+}
+
+.conversation-avatar {
+  margin-right: 16px;
+}
+
+.avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.participant-name {
+  font-weight: bold;
+  color: #333;
+}
+
+.timestamp {
+  color: #666;
+  font-size: 12px;
+}
+
+.last-message {
+  margin-bottom: 8px;
+}
+
+.message-preview {
+  color: #555;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.unread-badge {
+  background: #007bff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
