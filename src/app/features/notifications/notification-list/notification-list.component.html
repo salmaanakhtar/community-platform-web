@@ -1,0 +1,37 @@
+<div class="notification-list">
+  <div class="header">
+    <h2>Notifications</h2>
+    <div class="actions">
+      <button
+        (click)="markAllAsRead()"
+        class="mark-all-read-btn"
+        [disabled]="notifications.filter(n => !n.isRead).length === 0"
+      >
+        Mark All Read
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading notifications...
+  </div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="empty">
+    <p>No notifications yet</p>
+  </div>
+
+  <div *ngIf="!loading && notifications.length > 0" class="notifications">
+    <app-notification-item
+      *ngFor="let notification of notifications"
+      [notification]="notification"
+      (notificationClicked)="onNotificationClick($event)"
+      (deleteClicked)="deleteNotification($event)"
+    ></app-notification-item>
+  </div>
+
+  <div *ngIf="!loading && notifications.length > 0" class="load-more">
+    <button (click)="loadMore()" class="load-more-btn">
+      Load More
+    </button>
+  </div>
+</div>
