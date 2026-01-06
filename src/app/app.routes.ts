@@ -40,6 +40,11 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'notifications',
+    loadComponent: () => import('./features/notifications/notification-list/notification-list.component').then(m => m.NotificationListComponent),
+    canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+  },
+  {
     path: 'settings',
     children: [
       {
