@@ -5,7 +5,7 @@
       <button
         (click)="markAllAsRead()"
         class="mark-all-read-btn"
-        [disabled]="notifications.filter(n => !n.isRead).length === 0"
+        [disabled]="unreadCount === 0"
       >
         Mark All Read
       </button>

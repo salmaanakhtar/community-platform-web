@@ -38,6 +38,10 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  get unreadCount(): number {
+    return this.notifications.filter(n => !n.isRead).length;
+  }
+
   loadNotifications() {
     this.loading = true;
     this.subscription.add(
