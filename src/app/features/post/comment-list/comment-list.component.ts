@@ -78,7 +78,13 @@ export class CommentListComponent implements OnInit {
           // Replace optimistic with real
           const index = this.comments.findIndex(c => c._id === optimisticComment._id);
           if (index !== -1) {
-            this.comments[index] = response.comment;
+            this.comments[index] = {
+              _id: response._id,
+              content: response.text, // Map text to content
+              author: response.author,
+              createdAt: response.createdAt,
+              isDeleted: response.deleted
+            };
           }
           this.commentForm.reset();
         },

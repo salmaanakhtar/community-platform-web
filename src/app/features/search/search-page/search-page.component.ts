@@ -37,7 +37,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   onSearchInput() {
-    this.searchService.search(this.searchQuery).subscribe();
+    this.searchService.triggerSearch(this.searchQuery);
   }
 
   performSearch(query: string) {
@@ -73,8 +73,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   navigateToPost(postId: string) {
-    // For now, navigate to feed. Could be enhanced to scroll to specific post
-    this.router.navigate(['/feed']);
+    this.router.navigate(['/post', postId]);
   }
 
   clearSearch() {

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
+import { AuthService } from './auth.service';
 
 export interface Conversation {
   _id: string;
@@ -41,10 +42,13 @@ export class MessageService {
   private socket: Socket | null = null;
   private conversationsSubject = new BehaviorSubject<Conversation[]>([]);
   public conversations$ = this.conversationsSubject.asObservable();
+  private newMessageSubject = new BehaviorSubject<Message | null>(null);
+  public newMessage$ = this.newMessageSubject.asObservable();
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.socket = io(environment.socketUrl);
@@ -97,10 +101,20 @@ export class MessageService {
   private setupSocketListeners(): void {
     if (!this.socket) return;
 
+    // Join user room when connected
+    this.socket.on('connect', () => {
+      const userId = this.authService.getCurrentUserId();
+      if (userId) {
+        this.socket?.emit('join', userId);
+      }
+    });
+
     // New message received
     this.socket.on('newMessage', (message: Message) => {
       // Update conversations list
       this.refreshConversations();
+      // Emit the new message
+      this.newMessageSubject.next(message);
     });
 
     // Message read by other user

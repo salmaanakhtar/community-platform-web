@@ -23,23 +23,23 @@ export class ProfileService {
   constructor(private http: HttpClient) {}
 
   getProfile(userId: string): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${environment.apiUrl}/users/${userId}`);
+    return this.http.get<UserProfile>(`${environment.apiUrl}/users/${userId}`, { withCredentials: true });
   }
 
   followUser(userId: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/follows`, { userId });
+    return this.http.post(`${environment.apiUrl}/follow/user/${userId}`, {}, { withCredentials: true });
   }
 
   unfollowUser(userId: string): Observable<any> {
-    return this.http.delete(`${environment.apiUrl}/follows/${userId}`);
+    return this.http.delete(`${environment.apiUrl}/follow/user/${userId}`, { withCredentials: true });
   }
 
   blockUser(userId: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/blocks`, { userId });
+    return this.http.post(`${environment.apiUrl}/users/${userId}/block`, {}, { withCredentials: true });
   }
 
   unblockUser(userId: string): Observable<any> {
-    return this.http.delete(`${environment.apiUrl}/blocks/${userId}`);
+    return this.http.delete(`${environment.apiUrl}/users/${userId}/block`, { withCredentials: true });
   }
 
   getBlockedUsers(): Observable<UserProfile[]> {
@@ -51,10 +51,10 @@ export class ProfileService {
   }
 
   isFollowing(userId: string): Observable<boolean> {
-    return this.http.get<boolean>(`${environment.apiUrl}/follows/${userId}/status`);
+    return this.http.get<boolean>(`${environment.apiUrl}/follow/${userId}/status`);
   }
 
   isBlocked(userId: string): Observable<boolean> {
-    return this.http.get<boolean>(`${environment.apiUrl}/blocks/${userId}/status`);
+    return this.http.get<boolean>(`${environment.apiUrl}/users/${userId}/block-status`);
   }
 }

@@ -23,7 +23,13 @@ export class PostCardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Check permissions
+    // Skip permission check for temporary/optimistic posts
+    if (this.post._id.startsWith('temp-')) {
+      this.canEngage = true;
+      return;
+    }
+
+    // Check permissions for real posts
     this.engagementService.checkEngagementPermissions(this.post._id).subscribe({
       next: (permissions) => {
         this.canEngage = permissions.canEngage;
@@ -37,8 +43,9 @@ export class PostCardComponent implements OnInit {
   likePost(): void {
     if (!this.post.isDeleted && this.canEngage) {
       // Optimistic update
-      const wasLiked = this.post.likesCount > 0; // Simplified, assume toggle
-      this.post.likesCount += wasLiked ? -1 : 1;
+      const wasLiked = this.post.isLiked;
+      this.post.isLiked = !this.post.isLiked;
+      this.post.likesCount += this.post.isLiked ? 1 : -1;
 
       const action = wasLiked ? this.engagementService.unlikePost : this.engagementService.likePost;
       action.call(this.engagementService, this.post._id).subscribe({
@@ -47,7 +54,8 @@ export class PostCardComponent implements OnInit {
         },
         error: () => {
           // Rollback
-          this.post.likesCount += wasLiked ? 1 : -1;
+          this.post.isLiked = wasLiked;
+          this.post.likesCount += wasLiked ? -1 : 1;
         }
       });
     }

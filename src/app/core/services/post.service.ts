@@ -23,13 +23,16 @@ export class PostService {
       return throwError('Rate limited. Please wait before posting.');
     }
 
-    const formData = new FormData();
-    formData.append('content', postData.content);
     if (postData.media) {
+      // Send as FormData if there's media
+      const formData = new FormData();
+      formData.append('content', postData.content);
       formData.append('media', postData.media);
+      return this.http.post(`${environment.apiUrl}/posts`, formData);
+    } else {
+      // Send as JSON if no media
+      return this.http.post(`${environment.apiUrl}/posts`, { content: postData.content });
     }
-
-    return this.http.post(`${environment.apiUrl}/posts`, formData);
   }
 
   checkPermissions(): Observable<any> {

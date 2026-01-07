@@ -13,7 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class MessageInputComponent {
   @Input() conversationId: string = '';
-  @Output() messageSent = new EventEmitter<Message>();
+  @Input() recipientId: string = '';
+  @Output() messageSent = new EventEmitter<any>();
   @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
 
   messageContent: string = '';
@@ -28,19 +29,42 @@ export class MessageInputComponent {
     if (!this.messageContent.trim() || this.sending) return;
 
     this.sending = true;
-    this.messageService.sendMessage(this.conversationId, this.messageContent.trim()).subscribe({
-      next: (message) => {
-        this.messageContent = '';
-        this.messageSent.emit(message);
-        this.adjustTextareaHeight();
-        this.sending = false;
-      },
-      error: (err) => {
-        console.error('Failed to send message:', err);
-        this.toastr.error('Failed to send message');
-        this.sending = false;
-      }
-    });
+    console.log('Sending message:', { conversationId: this.conversationId, recipientId: this.recipientId, content: this.messageContent.trim() });
+
+    if (this.conversationId && this.conversationId !== 'new') {
+      console.log('Sending to existing conversation:', this.conversationId);
+      // Existing conversation
+      this.messageService.sendMessage(this.conversationId, this.messageContent.trim()).subscribe({
+        next: (message) => {
+          console.log('Message sent successfully:', message);
+          this.messageContent = '';
+          this.messageSent.emit(message);
+          this.adjustTextareaHeight();
+          this.sending = false;
+        },
+        error: (err) => {
+          console.error('Failed to send message:', err);
+          this.toastr.error('Failed to send message');
+          this.sending = false;
+        }
+      });
+    } else if (this.recipientId) {
+      console.log('Starting new conversation with:', this.recipientId);
+      this.messageService.startConversation(this.recipientId, this.messageContent.trim()).subscribe({
+        next: (result) => {
+          console.log('Conversation started successfully:', result);
+          this.messageContent = '';
+          this.messageSent.emit(result); // Emit the full result including conversation
+          this.adjustTextareaHeight();
+          this.sending = false;
+        },
+        error: (err) => {
+          console.error('Failed to start conversation:', err);
+          this.toastr.error('Failed to send message');
+          this.sending = false;
+        }
+      });
+    }
   }
 
   onKeyPress(event: KeyboardEvent) {

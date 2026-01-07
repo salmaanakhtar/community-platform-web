@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ErrorHandlerService } from '../errors/error-handler.service';
 
@@ -43,7 +44,15 @@ export class EngagementService {
   }
 
   getComments(postId: string): Observable<Comment[]> {
-    return this.http.get<Comment[]>(`${environment.apiUrl}/posts/${postId}/comments`);
+    return this.http.get<any[]>(`${environment.apiUrl}/posts/${postId}/comments`).pipe(
+      map(comments => comments.map(comment => ({
+        _id: comment._id,
+        content: comment.text, // Map text to content
+        author: comment.author,
+        createdAt: comment.createdAt,
+        isDeleted: comment.deleted
+      })))
+    );
   }
 
   deleteComment(postId: string, commentId: string): Observable<any> {

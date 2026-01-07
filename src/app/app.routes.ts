@@ -20,6 +20,11 @@ export const routes: Routes = [
     canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
   },
   {
+    path: 'post/:id',
+    loadComponent: () => import('./features/post/post-detail/post-detail.component').then(m => m.PostDetailComponent),
+    canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+  },
+  {
     path: 'search',
     loadComponent: () => import('./features/search/search-page/search-page.component').then(m => m.SearchPageComponent),
     canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
@@ -30,6 +35,11 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./features/messages/inbox/inbox.component').then(m => m.InboxComponent),
+        canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
+      },
+      {
+        path: 'new',
+        loadComponent: () => import('./features/messages/conversation/conversation.component').then(m => m.ConversationComponent),
         canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
       },
       {
@@ -53,6 +63,11 @@ export const routes: Routes = [
         canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
       }
     ]
+  },
+  {
+    path: 'feed',
+    loadComponent: () => import('./features/feed/feed.component').then(m => m.FeedComponent),
+    canActivate: [() => import('./core/guards/auth.guard').then(m => m.authGuard)]
   },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' }
 ];

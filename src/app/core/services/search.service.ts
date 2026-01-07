@@ -36,7 +36,7 @@ export interface PostSearchResult {
   providedIn: 'root'
 })
 export class SearchService {
-  private searchSubject = new Subject<string>();
+  public searchSubject = new Subject<string>();
   public searchResults$ = this.searchSubject.pipe(
     debounceTime(300),
     distinctUntilChanged()
@@ -54,6 +54,10 @@ export class SearchService {
 
     const params = new HttpParams().set('q', query.trim());
     return this.http.get<SearchResult>(`${environment.apiUrl}/search`, { params });
+  }
+
+  triggerSearch(query: string) {
+    this.searchSubject.next(query);
   }
 
   searchUsers(query: string): Observable<UserSearchResult[]> {

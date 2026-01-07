@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MessageService, Message, MessagingPermissions } from '../../../core/services/message.service';
+import { ProfileService } from '../../../core/services/profile.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { MessageInputComponent } from '../message-input/message-input.component';
 
 @Component({
@@ -26,19 +28,86 @@ export class ConversationComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private profileService: ProfileService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    this.conversationId = this.route.snapshot.paramMap.get('id') || '';
-    if (this.conversationId) {
-      this.loadConversation();
+    if (this.router.url.includes('/messages/new')) {
+      this.conversationId = 'new';
+      this.handleNewConversation();
       this.checkMessagingPermissions();
+    } else {
+      this.conversationId = this.route.snapshot.paramMap.get('id') || '';
+      if (this.conversationId) {
+        this.loadConversation();
+        this.checkMessagingPermissions();
+      }
     }
+
+    // Listen for real-time message updates
+    this.setupSocketListeners();
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  private setupSocketListeners(): void {
+    // Listen for new messages in this conversation
+    this.subscription.add(
+      this.messageService.conversations$.subscribe(() => {
+        // Refresh conversation if needed
+      })
+    );
+
+    // Listen for real-time message updates
+    this.subscription.add(
+      this.messageService.newMessage$.subscribe((message) => {
+        if (message && message.conversationId === this.conversationId) {
+          // Add the message to the current conversation
+          this.messages.push(message);
+          this.scrollToBottom();
+        }
+      })
+    );
+  }
+
+  handleNewConversation() {
+    const userId = this.route.snapshot.queryParams['user'];
+    if (userId) {
+      // Fetch user profile for username
+      this.profileService.getProfile(userId).subscribe({
+        next: (profile) => {
+          this.otherParticipant = { _id: profile._id, username: profile.username };
+        },
+        error: () => {
+          this.otherParticipant = { _id: userId, username: 'Unknown User' };
+        }
+      });
+
+      this.messageService.checkMessagingPermissions(userId).subscribe({
+        next: (permissions) => {
+          if (permissions.canMessage) {
+            this.canMessage = true;
+            this.loading = false;
+            // For new conversations, we don't load messages until the first message is sent
+          } else {
+            this.canMessage = false;
+            this.blockReason = permissions.reason || '';
+            this.loading = false;
+          }
+        },
+        error: () => {
+          this.canMessage = false;
+          this.blockReason = 'Unable to verify messaging permissions';
+          this.loading = false;
+        }
+      });
+    } else {
+      this.router.navigate(['/messages']);
+    }
   }
 
   loadConversation() {
@@ -85,13 +154,24 @@ export class ConversationComponent implements OnInit, OnDestroy {
     }
   }
 
-  onMessageSent(message: Message) {
-    this.messages.push(message);
-    this.scrollToBottom();
+  onMessageSent(result: any) {
+    if (result.conversation) {
+      // New conversation created, navigate to it
+      this.conversationId = result.conversation._id;
+      this.router.navigate(['/messages', this.conversationId], { replaceUrl: true });
+      // Load the conversation messages
+      this.loadConversation();
+    } else if (result.conversationId) {
+      // Existing conversation, add message
+      this.messages.push(result);
+      this.scrollToBottom();
+    }
   }
 
   markAsRead() {
-    this.messageService.markAsRead(this.conversationId).subscribe();
+    if (this.conversationId && this.conversationId !== 'new') {
+      this.messageService.markAsRead(this.conversationId).subscribe();
+    }
   }
 
   goBack() {
@@ -107,8 +187,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   private getCurrentUserId(): string {
-    // TODO: Get from AuthService
-    return '';
+    return this.authService.getCurrentUserId() || '';
   }
 
   isOwnMessage(message: Message): boolean {

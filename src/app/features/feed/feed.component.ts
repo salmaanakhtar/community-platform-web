@@ -18,20 +18,28 @@ export class FeedComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   currentPage = 1;
   private subscription: Subscription = new Subscription();
+  private hasInitialized = false;
+  private currentUserId: string = '';
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private feedService: FeedService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    this.currentUserId = this.authService.getCurrentUserId() || '';
+  }
 
   ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId) && !this.hasInitialized) {
+      this.hasInitialized = true;
       this.feedService.refreshFeed();
       this.subscription.add(
         this.feedService.posts$.subscribe(posts => {
           this.posts = posts;
+          this.posts.forEach(post => {
+            post.isLiked = post.likes?.some(like => like._id === this.currentUserId);
+          });
         })
       );
     }
@@ -39,6 +47,7 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+    this.hasInitialized = false; // Reset for potential re-initialization
     if (isPlatformBrowser(this.platformId)) {
       this.feedService.disconnectSocket();
     }

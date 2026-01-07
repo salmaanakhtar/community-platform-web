@@ -126,8 +126,8 @@ export class ProfileHeaderComponent implements OnInit, OnChanges {
     this.messageService.checkMessagingPermissions(this.userId).subscribe({
       next: (permissions) => {
         if (permissions.canMessage) {
-          // Navigate to messages - the conversation will be created if it doesn't exist
-          this.router.navigate(['/messages'], {
+          // Navigate to new conversation
+          this.router.navigate(['/messages/new'], {
             queryParams: { user: this.userId }
           });
         } else {

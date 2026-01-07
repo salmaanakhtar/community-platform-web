@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
+import { catchError, tap, filter, take, switchMap, finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private accessToken: string | null = null;
+  private refreshTokenInProgress: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private http: HttpClient) { }
 
@@ -44,10 +46,27 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/auth/refresh`, {}).pipe(
-      tap((response: any) => {
-        this.accessToken = response.accessToken;
-      })
+    if (!this.refreshTokenInProgress.value) {
+      this.refreshTokenInProgress.next(true);
+      this.refreshTokenSubject.next(null);
+
+      this.http.post(`${environment.apiUrl}/auth/refresh`, {}).pipe(
+        tap((response: any) => {
+          this.accessToken = response.accessToken;
+          this.refreshTokenSubject.next(response);
+        }),
+        catchError(err => {
+          this.refreshTokenSubject.next(null);
+          return throwError(err);
+        }),
+        finalize(() => this.refreshTokenInProgress.next(false))
+      ).subscribe();
+    }
+
+    return this.refreshTokenSubject.pipe(
+      filter(result => result !== null),
+      take(1),
+      switchMap(() => of({}))
     );
   }
 
@@ -58,7 +77,7 @@ export class AuthService {
       // Decode JWT token (simple decode, not verifying signature)
       const payload = this.accessToken.split('.')[1];
       const decodedPayload = JSON.parse(atob(payload));
-      return decodedPayload.userId || decodedPayload.id || null;
+      return decodedPayload.user?.id || null;
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;

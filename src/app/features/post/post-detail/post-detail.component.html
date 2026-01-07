@@ -1,0 +1,10 @@
+<div class="post-detail">
+  <div *ngIf="post" class="post-container">
+    <app-post-card [post]="post"></app-post-card>
+    <app-comment-list [postId]="postId"></app-comment-list>
+  </div>
+
+  <div *ngIf="!post" class="loading">
+    Loading post...
+  </div>
+</div>

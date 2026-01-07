@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MessageService, Conversation } from '../../../core/services/message.service';
 
@@ -18,21 +18,11 @@ export class InboxComponent implements OnInit, OnDestroy {
 
   constructor(
     private messageService: MessageService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.loadConversations();
-
-    // Check for user query param to start new conversation
-    this.subscription.add(
-      this.route.queryParams.subscribe(params => {
-        if (params['user']) {
-          this.startConversationWithUser(params['user']);
-        }
-      })
-    );
   }
 
   ngOnDestroy() {
@@ -65,22 +55,6 @@ export class InboxComponent implements OnInit, OnDestroy {
   openConversation(conversation: Conversation) {
     // Clear query params and navigate to conversation
     this.router.navigate(['/messages', conversation._id]);
-  }
-
-  startConversationWithUser(userId: string) {
-    // Check if conversation already exists
-    const existingConversation = this.conversations.find(conv =>
-      conv.participants.some(p => p._id === userId)
-    );
-
-    if (existingConversation) {
-      this.router.navigate(['/messages', existingConversation._id]);
-    } else {
-      // Navigate to a new conversation view that will handle creation
-      this.router.navigate(['/messages/new'], {
-        queryParams: { user: userId }
-      });
-    }
   }
 
   getCurrentUserId(): string {
